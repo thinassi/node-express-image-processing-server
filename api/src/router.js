@@ -1,4 +1,3 @@
-const { json } = require('body-parser');
 const Router = require('express');
 const multer = require('multer');
 // const Storage = require('multer');
@@ -15,7 +14,7 @@ const upload = multer({
 
 
 const fileFilter = (request, file, callback) => {
-    if(file.mimetype !== 'image/png'){
+    if (file.mimetype !== 'image/png') {
         request.fileValidationError = 'Wrong file type';
         callback(null, false, new Error('Wrong file type'));
     } else {
@@ -28,16 +27,14 @@ const filename = (request, file, callback) => {
 };
 
 router.post('/upload', upload.single('photo'), (request, response) => {
-    try{
-        request.fileValidationError;
-        response.status(400).json({
+    if (request.fileValidationError) {
+        return response.status(400).json({
             error: request.fileValidationError
         });
-    } catch {
-        response.status(201).json({
-            success: true
-        });
     }
+    return response.status(201).json({
+        success: true
+    });
 });
 
 module.exports = router;
