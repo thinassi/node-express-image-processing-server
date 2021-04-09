@@ -6,15 +6,15 @@ const pathToMonochromeWorker = path.resolve(__dirname, 'monochromeWorker.js')
 
 uploadPathResolver = (filename) => {
     return path.resolve(__dirname, '../uploads', filename);
-}
+};
 
 imageProcessor = (filename) => {
-
     const sourcePath = uploadPathResolver(filename);
     const resizedDestination = uploadPathResolver('resized-' + filename);
     const monochromeDestination = uploadPathResolver('monochrome-' + filename);
     let resizeWorkerFinished = false;
     let monochromeWorkerFinished = false;
+
     return new Promise((resolve, reject) => {
         if (isMainThread) {
             try {
@@ -46,7 +46,7 @@ imageProcessor = (filename) => {
                 });
                 monochromeWorker.on('message', (message) => {
                     monochromeWorkerFinished = true;
-                    if (monochromeWorkerFinished) {
+                    if (resizeWorkerFinished) {
                         resolve('monochromeWorker finished processing')
                     };
                 });
@@ -60,8 +60,8 @@ imageProcessor = (filename) => {
                     }
                 });
 
-            } catch {
-                reject();
+            } catch(error) {
+                reject(error);
             };
 
         } else {
